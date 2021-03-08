@@ -1,0 +1,45 @@
+ i = alloc();
+ *i = PUBLIC;
+ j = i;
+ i = alloc();
+ *i = SENSITIVE;
+ k = alloc();
+ *k = i;
+ l = alloc();
+ *l = j;
+ m = alloc();
+ *m = l;
+ *m = k;
+ n = **m;
+ print(*n);
+
+
+ ***** MODEL A *****
+ i: ->Mem1, ->Mem2            
+ j: ->Mem1, ->Mem2            
+ k: ->Mem3                    
+ l: ->Mem4                    
+ m: ->Mem5                    
+ n: ->Mem1, ->Mem2
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: ->Mem1, ->Mem2
+ Mem5: ->Mem3, ->Mem4
+
+
+ ***** MODEL B *****
+ i: ->Mem1, ->Mem2            
+ j: ->Mem1                    
+ k: ->Mem3                    
+ l: ->Mem4                    
+ m: ->Mem5                    
+ n: ->Mem2
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+ Mem3: ->Mem2
+ Mem4: ->Mem1
+ Mem5: ->Mem3, ->Mem4
+

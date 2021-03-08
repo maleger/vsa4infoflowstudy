@@ -1,0 +1,79 @@
+ // type is unknown on entry to this fragment
+ // assume query is 1 on entry
+ jewelcost = alloc();
+ jewelweight = alloc();
+ jamcost = alloc();
+ jamweight = alloc();
+ cost = alloc();
+ weight = alloc();
+ init = alloc();
+ query = 1;
+ cost = init;
+ weight = init;
+ *init = jewelcost;
+ **init = SENSITIVE;
+ *init = jewelweight;
+ **init = PUBLIC;
+ *init = jamcost;
+ **init = PUBLIC;
+ *init = jamweight;
+ **init = PUBLIC;
+ if (type == 0) {
+     *weight = jewelweight;
+     *cost = jewelcost;
+ } else {
+     *weight = jamweight;
+     *cost = jewelcost; }
+ if (query == 0) {
+     dataloc = weight;
+ } else {
+     dataloc = cost; }
+ value = *dataloc;
+ print(*value);
+
+
+ ***** MODEL A *****
+ jewelcost: ->Mem1            
+ jewelweight: ->Mem2          
+ jamcost: ->Mem3              
+ jamweight: ->Mem4            
+ cost: ->Mem5, ->Mem7         
+ weight: ->Mem6, Mem7         
+ init: ->Mem7                 
+ query: ?
+ type: ?
+ dataloc: ->Mem5, ->Mem6
+ value: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: PUBLIC, SENSITIVE
+ Mem4: PUBLIC, SENSITIVE
+ Mem5: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem6: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem7: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+
+
+ ***** MODEL B *****
+ jewelcost: ->Mem1            
+ jewelweight: ->Mem2          
+ jamcost: ->Mem3              
+ jamweight: ->Mem4            
+ cost: ->Mem5, ->Mem7         
+ weight: ->Mem6, ->Mem7       
+ init: ->Mem7                 
+ query: 1
+ type: ?
+ dataloc: ->Mem5, ->Mem6
+ value: ->Mem1
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: PUBLIC
+ Mem4: PUBLIC
+ Mem5: ->Mem1
+ Mem6: ->Mem2, ->Mem4
+ Mem7: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+
+
+This example is inpsired by a base object (a variable rather than in memory) that has two fields, each of which has two fields. However, the two intermediate objects' second field both point to the same memory, and one of the four leaf memories allocated is not stored as a field at all. We set each four base memories directly, and we select one of the two intermediate objects based on the unknown variable. (Here, direct analysis of the base pointers present will not directly reveal that we are selecting one of the objects, but this code models that type of operation. See safe_n_medium for a more direct view of similar relationships.) We then the force the flow to model selecting the second field (here, cost) of the selected intermediate object. We then print that field. Here, the second field of both objects is the same memory, and that memory contains a SENSITIVE value, so this example ALWAYS prints SENSITIVE data.

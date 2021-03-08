@@ -1,0 +1,42 @@
+ // cond is unknown on entry to this fragment
+ r1 = alloc();
+ r2 = r1;
+ *r1 = PUBLIC;
+ r1 = alloc();
+ r3 = r1;
+ *r1 = SENSITIVE;
+ r1 = alloc();
+ if (cond == 1) {
+    *r1 = r3;
+ } else {
+    *r1 = r2; }
+ r4 = *r1;
+ print(*r4);
+
+
+ ***** MODEL A *****
+ r1: ->Mem1, ->Mem2, ->Mem3     
+ r2: ->Mem1, ->Mem2, ->Mem3     
+ r3: ->Mem1, ->Mem2, ->Mem3     
+ cond: ?
+ r4: ->Mem1, ->Mem2, ->Mem3
+
+ Mem1: PUBLIC, SENSITIVE, ->Mem1, ->Mem2, ->Mem3
+ Mem2: PUBLIC, SENSITIVE, ->Mem1, ->Mem2, ->Mem3
+ Mem3: PUBLIC, SENSITIVE, ->Mem1, ->Mem2, ->Mem3
+
+
+ ***** MODEL B *****
+ r1: ->Mem1, ->Mem2, ->Mem3     
+ r2: ->Mem1                     
+ r3: ->Mem2                     
+ cond: ?
+ r4: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: ->Mem1, ->Mem2
+
+
+** Need more information about the value of cond.
+

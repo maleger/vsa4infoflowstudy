@@ -1,0 +1,60 @@
+ // decision is unknown on entry to this fragment
+ treasure_chest_1 = alloc();
+ treasure_chest_2 = alloc();
+ treasure = SENSITIVE;
+ location = treasure_chest_2;
+ *location = treasure;
+ stash = alloc();
+ *stash = treasure;
+ treasure = PUBLIC;
+ location = treasure_chest_1;
+ *location = treasure;
+ castle = stash;
+ marketplace = stash;
+ loaded = stash;
+ if (decision == 0) {
+     loaded = treasure_chest_1; }
+ if (decision == 1) {
+     loaded = treasure_chest_2; }
+ shipped = loaded;
+ if (decision == 0) {
+     castle = shipped; }
+ if (decision == 1) {
+     marketplace = shipped; }
+ print(*marketplace);
+
+
+ ***** MODEL A *****
+ treasure_chest_1: ->Mem1          
+ treasure_chest_2: ->Mem2          
+ treasure: PUBLIC, SENSITIVE       
+ location: ->Mem1, ->Mem2
+ stash: ->Mem3                     
+ castle: ->Mem1, ->Mem2, ->Mem3
+ marketplace: ->Mem1, ->Mem2, ->Mem3
+ loaded: ->Mem1, ->Mem2 , ->Mem3
+ decision: ?
+ shipped: ->Mem1, ->Mem2, ->Mem3 
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ treasure_chest_1: ->Mem1          
+ treasure_chest_2: ->Mem2          
+ treasure: PUBLIC, SENSITIVE       
+ location: ->Mem1, ->Mem2
+ castle: ->Mem1, ->Mem3
+ marketplace: ->Mem2, ->Mem3
+ loaded: ->Mem1, ->Mem2, ->Mem3
+ decision: ?
+ shipped: ->Mem1, ->Mem2, ->Mem3
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+ Mem3: SENSITIVE
+
+
+This is inspired by the identity function call made from 2 sites where the setup code uses an inlined function (no call site switch, but the same locations used sequentially) to initialize both arguments to be passed to the modeled function. If called from site 0, the function is called with PUBLIC data that is never printed. If called from site 1, the function is called with SENSITIVE data that is printed. This example ALWAYS prints SENSITIVE data.

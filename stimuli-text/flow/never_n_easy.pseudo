@@ -1,0 +1,36 @@
+ eax = alloc();
+ *eax = SENSITIVE;
+ ebx = eax;
+ eax = alloc();
+ *eax = PUBLIC;
+ ecx = alloc();
+ *ecx = eax;
+ edx = alloc();
+ *edx = **ecx;
+ print(*edx);
+
+
+ ***** MODEL A *****
+ eax: ->Mem1, ->Mem2            
+ ebx: ->Mem1, ->Mem2            
+ ecx: ->Mem3                    
+ edx: ->Mem4                    
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ eax: ->Mem1, ->Mem2            
+ ebx: ->Mem1                    
+ ecx: ->Mem3                    
+ edx: ->Mem4                    
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: ->Mem2
+ Mem4: PUBLIC
+
+

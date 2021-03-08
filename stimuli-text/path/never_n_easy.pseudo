@@ -1,0 +1,30 @@
+ // assume condition is 1 on entry
+ answer = alloc();
+ *answer = SENSITIVE;
+ to_print = answer;
+ if (condition == 1) {
+     answer = alloc();
+     *answer = PUBLIC;
+     to_print = answer; }
+ print(*to_print);
+
+
+ ***** MODEL A *****
+ answer: ->Mem1, ->Mem2        
+ to_print: ->Mem1, ->Mem2      
+ condition: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ answer: ->Mem1, ->Mem2        
+ to_print: ->Mem2              
+ condition: 1
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+
+
+The assignment to the printed variable only occurs on a safe path, whereon answer is set to public before to_print can be set. This program NEVER prints SENSITIVE

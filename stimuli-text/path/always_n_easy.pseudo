@@ -1,0 +1,40 @@
+ // month is unknown on entry to this fragment
+ jennifer = alloc();
+ maryann = alloc();
+ birthdaygirl = alloc();
+ if(month == 1) {
+     *jennifer = PUBLIC;
+     *maryann = SENSITIVE;
+ } else {
+     *jennifer = SENSITIVE;
+     *maryann = PUBLIC; }
+ if (month == 1) {
+     *birthdaygirl = *maryann;
+ } else {
+     *birthdaygirl = *jennifer; }
+ print(*birthdaygirl);
+
+
+ ***** MODEL A *****
+ jennifer: ->Mem1              
+ maryann: ->Mem2               
+ birthdaygirl: ->Mem3          
+ month: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ jennifer: ->Mem1              
+ maryann: ->Mem2               
+ birthdaygirl: ->Mem3          
+ month: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: SENSITIVE
+
+
+On all paths, the printed variable is only ever assigned a SENSITIVE value, thus this program ALWAYS prints SENSITIVE.

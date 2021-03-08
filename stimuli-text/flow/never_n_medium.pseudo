@@ -1,0 +1,58 @@
+ dat_ptr = alloc();
+ *dat_ptr = PUBLIC;
+ ptr_data1 = dat_ptr;
+ pptr_d1 = alloc();
+ *pptr_d1 = dat_ptr;
+ ppp_d1 = alloc();
+ *ppp_d1 = pptr_d1;
+ dat_ptr = alloc();
+ *dat_ptr = SENSITIVE;
+ ptr_data2 = dat_ptr;
+ pptr_d2 = alloc();
+ *pptr_d2 = dat_ptr;
+ ppp_d2 = alloc();
+ *ppp_d2 = pptr_d2;
+ temp = ppp_d2;
+ temp = ppp_d1;
+ answer = **temp;
+ print(*answer);
+
+
+ ***** MODEL A *****
+ dat_ptr: ->Mem1, ->Mem4            
+ ptr_data1: ->Mem1, ->Mem4          
+ pptr_d1: ->Mem2                    
+ ppp_d1: ->Mem3                     
+ ptr_data2: ->Mem1, ->Mem4          
+ pptr_d2: ->Mem5                    
+ ppp_d2: ->Mem6
+ temp: ->Mem3, ->Mem6
+ answer: ->Mem1, ->Mem4
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: ->Mem1, ->Mem4
+ Mem3: ->Mem2
+ Mem4: PUBLIC, SENSITIVE
+ Mem5: ->Mem1, ->Mem4
+ Mem6: ->Mem5
+
+
+ ***** MODEL B *****
+ dat_ptr: ->Mem1, ->Mem4            
+ ptr_data1: ->Mem1, ->Mem4          
+ pptr_d1: ->Mem2                    
+ ppp_d1: ->Mem3                     
+ ptr_data2: ->Mem1, ->Mem4          
+ pptr_d2: ->Mem5                    
+ ppp_d2: ->Mem6
+ temp: ->Mem3, ->Mem6
+ answer: ->Mem1
+
+ Mem1: PUBLIC
+ Mem2: ->Mem1
+ Mem3: ->Mem2
+ Mem4: SENSITIVE
+ Mem5: ->Mem4
+ Mem6: ->Mem5
+
+

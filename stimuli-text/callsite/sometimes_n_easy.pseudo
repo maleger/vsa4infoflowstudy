@@ -1,0 +1,49 @@
+ // fs is unknown on entry to this fragment
+ esi = alloc();
+ edi = alloc();
+ *esi = SENSITIVE;
+ *edi = PUBLIC;
+ ebx = edi;
+ ecx = edi;
+ edx = edi;
+ if (fs == 1) {
+     ecx = esi; }
+ if (fs == 2) {
+     ecx = edi; }
+ eax = ecx;
+ if (fs == 2) {
+     ebx = eax; }
+ if (fs == 1) {
+     edx = eax; }
+ print(*edx);
+
+
+ ***** MODEL A *****
+ esi: ->Mem1             
+ edi: ->Mem2             
+ ebx: ->Mem1, ->Mem2
+ ecx: ->Mem1, ->Mem2 
+ edx: ->Mem1, ->Mem2
+ fs: ?
+ eax: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+
+
+ ***** MODEL B *****
+ esi: ->Mem1             
+ edi: ->Mem2             
+ ebx: ->Mem2
+ ecx: ->Mem1, ->Mem2 
+ edx: ->Mem1, ->Mem2
+ fs: ?
+ eax: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+
+
+** Need more information about the value of edx.
+
+This is inspired by an identity function call made from 2 call sites. If called from site 1, the function is called with SENSITIVE data. From the other site, it is called with PUBLIC data. From call site 2, the return value is placed in ebx. From the other site, it is placed in edx and is then printed. From call site 1, this would definitely leak sensitive data. From call site 2, this would not leak any data (and would not even print PUBLIC data). However, this problem has an indeterminate answer because we do not know if call site 1 is reachable (if fs can be 1). Thus this example SOMETIMES prints SENSTIVE data, depending on fs.

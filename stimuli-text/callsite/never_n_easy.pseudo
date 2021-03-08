@@ -1,0 +1,53 @@
+ // animal is unknown on entry to this fragment
+ idtag1 = alloc();
+ idtag2 = alloc();
+ default = alloc();
+ *idtag1 = SENSITIVE;
+ *idtag2 = PUBLIC;
+ *default = PUBLIC;
+ pet1_tag = default;
+ pet2_tag = default;
+ whichid = default;
+ if (animal == 1) {
+     whichid = idtag1; }
+ if (animal == 2) {
+     whichid = idtag2; }
+ my_id = whichid;
+ if (animal == 1) {
+     pet1_tag = my_id; }
+ if (animal == 2) {
+     pet2_tag = my_id; }
+ print(*pet2_tag);
+
+
+ ***** MODEL A *****
+ idtag1: ->Mem1              
+ idtag2: ->Mem2              
+ default: ->Mem3             
+ pet1_tag: ->Mem1, ->Mem2, ->Mem3
+ pet2_tag: ->Mem1, ->Mem2, ->Mem3
+ whichid: ->Mem1, ->Mem2, ->Mem3
+ animal: ?
+ my_id: ->Mem1, ->Mem2, ->Mem3
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: PUBLIC
+
+
+ ***** MODEL B *****
+ idtag1: ->Mem1              
+ idtag2: ->Mem2              
+ default: ->Mem3             
+ pet1_tag: ->Mem1, ->Mem3
+ pet2_tag: ->Mem2, ->Mem3
+ whichid: ->Mem1, ->Mem2, ->Mem3
+ animal: ?
+ my_id: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: PUBLIC
+
+
+This is inspired by an identity function call made from 2 sites. If called from site 1, the function is called with SENSITIVE data that is never printed. If called from site 2, the function is called with PUBLIC data that is printed. This example NEVER prints SENSITIVE data.

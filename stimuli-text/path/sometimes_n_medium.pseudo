@@ -1,0 +1,47 @@
+ // caller_id is unknown on entry to this fragment
+ my_record = alloc();
+ other_record = alloc();
+ pulled = alloc();
+ *my_record = SENSITIVE;
+ *other_record = PUBLIC;
+ if (caller_id == 1) {
+     *pulled = my_record;
+ } else {
+     *pulled = other_record; }
+ if (caller_id == 2) {
+     log_it = *pulled;
+ } else {
+     share = *pulled; }
+ print(*share);
+
+
+ ***** MODEL A *****
+ my_record: ->Mem1             
+ other_record: ->Mem2          
+ pulled: ->Mem3                
+ caller_id: ?
+ log_it: ->Mem1, ->Mem2
+ share: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: ->Mem1, ->Mem2
+
+
+ ***** MODEL B *****
+ my_record: ->Mem1             
+ other_record: ->Mem2          
+ pulled: ->Mem3                
+ caller_id: ?
+ log_it: ->Mem2
+ share: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+ Mem3: ->Mem1, ->Mem2
+
+
+** Need more information about the value of caller_id.
+
+This example is inspired by reasoning on paths where conditionals are related but different. If caller_id is 1, pulled points to the memory with SENSITIVE data. For all other values, it is called with PUBLIC data. If caller_id is 2, log_it holds a pointer to PUBLIC data. For all other values, share holds a pointer to the data. If caller_id is 1, share holds a pointer SENSITIVE data, but if anything else, share holds a a pointer to PUBLIC data. share is printed. Thus this problem SOMETIMES prints SENSITIVE data, depending on the value of caller_id.
+

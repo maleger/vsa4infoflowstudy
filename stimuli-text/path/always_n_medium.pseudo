@@ -1,0 +1,57 @@
+ // choice is unknown on entry to this fragment
+ d1 = alloc();
+ d2 = alloc();
+ ptr1 = alloc();
+ ptr2 = alloc();
+ answer = alloc();
+ if (choice == 0) {
+     *ptr1 = d1;
+ } else {
+     *ptr1 = d2; }
+ if (choice == 1) {
+     *d1 = PUBLIC;
+     *d2 = SENSITIVE;
+ } else {
+     *d1 = SENSITIVE;
+     *d2 = PUBLIC; }
+ *ptr2 = *ptr1;
+ if (*ptr2 == d2) {
+     if (choice == 0) {
+         *d2 = PUBLIC;
+     } else {
+         *d2 = SENSITIVE; } }
+ *answer = **ptr2;
+ print(*answer);
+
+
+ ***** MODEL A *****
+ d1: ->Mem1              
+ d2: ->Mem2              
+ ptr1: ->Mem3            
+ ptr2: ->Mem4            
+ answer: ->Mem5          
+ choice: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: ->Mem1, ->Mem2
+ Mem5: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ d1: ->Mem1              
+ d2: ->Mem2              
+ ptr1: ->Mem3            
+ ptr2: ->Mem4            
+ answer: ->Mem5          
+ choice: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: ->Mem1, ->Mem2
+ Mem5: SENSITIVE
+
+
+On paths where choice is 0, ptr1->d1, d1->SENSITIVE, and the third if/else is not taken. On paths where choice is 1, ptr1->d2, d2->sensitive, and d2 is updated in the third if to remain SENSITIVE. On paths where choice is 2, ptr1->d2, which is set to PUBLIC but then updated in the final if to be SENSITIVE. Thus all paths result is ptr1/ptr2->a*->SENSITIVE and the program ALWAYS prints SENSITIVE.

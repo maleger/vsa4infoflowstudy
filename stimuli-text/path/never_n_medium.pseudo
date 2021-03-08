@@ -1,0 +1,58 @@
+ // cond is unknown on entry to this fragment
+ a1 = alloc();
+ a2 = alloc();
+ a3 = alloc();
+ b1 = alloc();
+ *a1 = PUBLIC;
+ *a2 = PUBLIC;
+ *b1 = a2;
+ *b1 = a1;
+ if (cond == 0) { 
+     *a3 = a1;
+     *b1 = a1; }
+ if (cond == 1) {
+     *a3 = a2;
+     *b1 = a1; }
+ if (cond == 2) {
+     *a3 = a1;
+     *b1 = a1; }
+ if (cond == 3) {
+     *a3 = a2;
+     *b1 = a1; }
+ if (cond == 0) {
+     *a3 = PUBLIC; }
+ if (cond == 1) {
+     *a3 = PUBLIC; }
+ if (cond == 2) {
+     *a3 = PUBLIC; }
+ if (cond == 3) {
+     *a3 = SENSITIVE; }
+ print(*b1);
+
+
+ ***** MODEL A *****
+ a1: ->Mem1             
+ a2: ->Mem2             
+ a3: ->Mem3             
+ b1: ->Mem4             
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: ->Mem1, ->Mem2
+
+
+ ***** MODEL B *****
+ a1: ->Mem1             
+ a2: ->Mem2             
+ a3: ->Mem3             
+ b1: ->Mem4             
+
+ Mem1: PUBLIC
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+ Mem4: ->Mem1
+
+
+This is inspired by reasoning about decision variables modulo 2 and specific values being set. Here, a1 is always set to a PUBLIC value and only a1 is printed.
+

@@ -1,0 +1,79 @@
+ // type is unknown on entry to this fragment
+ // assume sel is 1 on entry
+ mem1 = alloc();
+ mem2 = alloc();
+ mem3 = alloc();
+ mem4 = alloc();
+ mem5 = alloc();
+ mem6 = alloc();
+ mem7 = alloc();
+ *mem7 = mem5;
+ **mem7 = mem2;
+ ***mem7 = SENSITIVE;
+ **mem7 = mem1;
+ ***mem7 = PUBLIC;
+ *mem7 = mem6;
+ **mem7 = mem4;
+ ***mem7 = PUBLIC;
+ **mem7 = mem3;
+ ***mem7 = PUBLIC;
+ if (type == 0) {
+     ptr1 = *mem5;
+     ptr2 = mem2;
+ } else {
+     ptr1 = *mem6;
+     ptr2 = mem4; }
+ if (sel == 1) {
+     ptr3 = ptr1; }
+ if (sel == 2) {
+     ptr3 = ptr2; }
+ print(*ptr3);
+
+
+ ***** MODEL A *****
+ mem1: ->Mem1                
+ mem2: ->Mem2                
+ mem3: ->Mem3                
+ mem4: ->Mem4                
+ mem5: ->Mem5                
+ mem6: ->Mem6                
+ mem7: ->Mem7                
+ type: ?
+ ptr1: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ ptr2: ->Mem2, ->Mem4
+ sel: ?
+ ptr3: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: PUBLIC, SENSITIVE
+ Mem4: PUBLIC, SENSITIVE
+ Mem5: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem6: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem7: ->Mem5, ->Mem6
+
+
+ ***** MODEL B *****
+ mem1: ->Mem1                
+ mem2: ->Mem2                
+ mem3: ->Mem3                
+ mem4: ->Mem4                
+ mem5: ->Mem5                
+ mem6: ->Mem6                
+ mem7: ->Mem7                
+ type: ?
+ ptr1: ->Mem1, ->Mem3
+ ptr2: ->Mem2, ->Mem4
+ sel: 1
+ ptr3: ->Mem1, ->Mem3
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+ Mem3: PUBLIC
+ Mem4: PUBLIC
+ Mem5: ->Mem1, ->Mem2
+ Mem6: ->Mem3, ->Mem4
+ Mem7: ->Mem5, ->Mem6
+
+
+This example is inspired by a base object that has two fields, each of which has two fields. We use the base object and intermediate objects to access all leaf fields, setting the first leaf field of the first object to PUBLIC, the second leaf field of the first object to SENSITIVE, and the leaf fields of the first object to PUBLIC. We select one of the two intermediate objects based on the unknown variable. We then the force the flow to model selecting the first field (here, ptr1) of the selected intermediate object. We then print that field. Since both first fields are PUBLIC, this program NEVER prints SENSITIVE data.

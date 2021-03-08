@@ -1,0 +1,35 @@
+ // order is unknown on entry to this fragment
+ folder = alloc();
+ *folder = SENSITIVE;
+ striped = folder;
+ folder = alloc();
+ *folder = PUBLIC;
+ if (order == 0) {
+    delivered = folder;
+ } else {
+    delivered = striped; }
+ print(*delivered);
+
+
+ ***** MODEL A *****
+ folder: ->Mem1, ->Mem2            
+ striped: ->Mem1, ->Mem2           
+ order: ?
+ delivered: ->Mem1, ->Mem2   
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ folder: ->Mem1, ->Mem2            
+ striped: ->Mem1                   
+ order: ?
+ delivered: ->Mem1, ->Mem2
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+
+
+** Need more information about the value of order.
+

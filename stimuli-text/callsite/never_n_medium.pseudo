@@ -1,0 +1,53 @@
+ // selection is unknown on entry to this fragment
+ predict1 = alloc();
+ predict2 = alloc();
+ capsule = alloc();
+ *predict1 = PUBLIC;
+ *predict2 = SENSITIVE;
+ dig2050 = predict1;
+ dig2025 = predict1;
+ to_save = predict1;
+ if (selection == 0) {
+     to_save = predict1; }
+ if (selection == 1) {
+     to_save = predict2; }
+ *capsule = to_save;
+ buried = capsule;
+ if (selection == 0) {
+     dig2050 = *buried; }
+ if (selection == 1) {
+     dig2025 = *buried; }
+ print(*dig2050);
+
+
+ ***** MODEL A *****
+ predict1: ->Mem1          
+ predict2: ->Mem2          
+ capsule: ->Mem3           
+ dig2050: ->Mem1, ->Mem2
+ dig2025: ->Mem1, ->Mem2
+ to_save: ->Mem1, ->Mem2
+ selection: ?
+ buried: ->Mem3
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+
+
+ ***** MODEL B *****
+ predict1: ->Mem1          
+ predict2: ->Mem2          
+ capsule: ->Mem3           
+ dig2050: ->Mem1
+ dig2025: ->Mem1, ->Mem2
+ to_save: ->Mem1, ->Mem2 
+ selection: ?
+ buried: ->Mem3
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+
+
+This is inspired by the identity function call made from 2 sites where the return code is pass by reference instead of pass by value. If called from site 0, the function is called with PUBLIC data that is printed. If called from site 1, the function is called with SENSITIVE data that is never printed. This NEVER prints SENSITIVE data.

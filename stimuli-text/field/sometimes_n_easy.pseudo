@@ -1,0 +1,46 @@
+ // offset is unknown on entry to this fragment
+ // assume evidence is 0 on entry
+ person = alloc();
+ partner = alloc();
+ suspect = alloc();
+ if (evidence == 0) {
+     *suspect = person;
+ } else {
+     *suspect = partner; }
+ towrite = *suspect;
+ if (offset == 0) {
+     *towrite = SENSITIVE;
+ } else {
+     *towrite = PUBLIC; }
+ print(*person);
+
+
+ ***** MODEL A *****
+ person: ->Mem1           
+ partner: ->Mem2          
+ suspect: ->Mem3          
+ evidence: ?
+ towrite: ->Mem1, ->Mem2
+ offset: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: ->Mem1, ->Mem2
+
+
+ ***** MODEL B *****
+ person: ->Mem1           
+ partner: ->Mem2          
+ suspect: ->Mem3          
+ evidence: 0
+ towrite: ->Mem1
+ offset: ?
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: <--uninitialized-->
+ Mem3: ->Mem1
+
+
+** Need more information about the value of offset.
+
+This is inspired by a base object that has two fields. We force the flow to model selecting the first field, write some SENSITIVE or PUBLIC data to that field depending on an unknown conditional, and then print the first field. Without knowing the value of the conditional, we cannot reason about this program. It SOMETIMES prints SENSITIVE.

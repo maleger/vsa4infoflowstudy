@@ -1,0 +1,31 @@
+ // cond is unknown on entry to this fragment
+ var = alloc();
+ *var = SENSITIVE;
+ if (cond == 1) {
+     var = alloc();
+     *var = PUBLIC; }
+ tmp = var;
+ print(*tmp);
+
+
+ ***** MODEL A *****
+ var: ->Mem1, ->Mem2      
+ cond: ?                  
+ tmp: ->Mem1, ->Mem2      
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+
+
+ ***** MODEL B *****
+ var: ->Mem1, ->Mem2      
+ cond: ?                  
+ tmp: ->Mem1, ->Mem2      
+
+ Mem1: SENSITIVE
+ Mem2: PUBLIC
+
+
+** Need more information about the value of cond.
+
+The assignment to the printed variable occurs on both paths, so the program SOMETIMES prints SENSITIVE depending on cond.

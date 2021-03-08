@@ -1,0 +1,47 @@
+ // loc is unknown on entry to this fragment
+ ptr1 = alloc();
+ ptr2 = alloc();
+ *ptr1 = PUBLIC;
+ *ptr2 = SENSITIVE;
+ dst1 = ptr2;
+ dst2 = ptr2;
+ prm = ptr2;
+ if (loc == 1) {
+     prm = ptr1; }
+ if (loc == 2) {
+     prm = ptr2; }
+ rtn = prm;
+ if (loc == 2) {
+     dst1 = rtn; }
+ if (loc == 1) {
+     dst2 = rtn; }
+ print(*dst1);
+
+
+ ***** MODEL A *****
+ ptr1: ->Mem1            
+ ptr2: ->Mem2            
+ dst1: ->Mem1, ->Mem2
+ dst2: ->Mem1, ->Mem2
+ prm: ->Mem1, ->Mem2 
+ loc: ?
+ rtn: ->Mem1, ->Mem2
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+
+
+ ***** MODEL B *****
+ ptr1: ->Mem1            
+ ptr2: ->Mem2            
+ dst1: ->Mem2
+ dst2: ->Mem1, ->Mem2
+ prm: ->Mem1, ->Mem2 
+ loc: ?
+ rtn: ->Mem1, ->Mem2
+
+ Mem1: PUBLIC
+ Mem2: SENSITIVE
+
+
+This is inspired by an identity function call made from 2 sites where the pre-conditionals and post-conditionals are in a different order. If called from site 1, the function is called with PUBLIC data that is never printed. If called from site 2, the function ALWAYS prints SENSITIVE data.

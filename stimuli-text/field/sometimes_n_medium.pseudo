@@ -1,0 +1,71 @@
+ // type is unknown on entry to this fragment
+ field_a1 = alloc();
+ field_a2 = alloc();
+ field_b1 = alloc();
+ field_b2 = alloc();
+ object_a = alloc();
+ object_b = alloc();
+ base = alloc();
+ *base = object_a;
+ **base = field_a1;
+ ***base = PUBLIC;
+ **base = field_a2;
+ ***base = PUBLIC;
+ *base = object_b;
+ **base = field_b1;
+ ***base = PUBLIC;
+ **base = field_b2;
+ ***base = SENSITIVE;
+ if (type == 0) {
+     object = object_a;
+ } else {
+     object = object_b; }
+ loc = *object;
+ print(*loc)
+
+
+ ***** MODEL A *****
+ field_a1: ->Mem1              
+ field_a2: ->Mem2              
+ field_b1: ->Mem3              
+ field_b2: ->Mem4              
+ object_a: ->Mem5              
+ object_b: ->Mem6              
+ base: ->Mem7                  
+ type: ?
+ object: ->Mem5, ->Mem6
+ loc: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+
+ Mem1: PUBLIC, SENSITIVE
+ Mem2: PUBLIC, SENSITIVE
+ Mem3: PUBLIC, SENSITIVE
+ Mem4: PUBLIC, SENSITIVE
+ Mem5: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem6: ->Mem1, ->Mem2, ->Mem3, ->Mem4
+ Mem7: ->Mem5, ->Mem6
+
+
+ ***** MODEL B *****
+ field_a1: ->Mem1              
+ field_a2: ->Mem2              
+ field_b1: ->Mem3              
+ field_b2: ->Mem4              
+ object_a: ->Mem5              
+ object_b: ->Mem6              
+ base: ->Mem7                  
+ type: ?
+ object: ->Mem5, ->Mem6
+ loc: ->Mem2, ->Mem4
+
+ Mem1: PUBLIC
+ Mem2: PUBLIC
+ Mem3: PUBLIC
+ Mem4: SENSITIVE
+ Mem5: ->Mem1, ->Mem2
+ Mem6: ->Mem3, ->Mem4
+ Mem7: ->Mem5, ->Mem6
+
+
+** Need more information about the value of type to know whether PUBLIC or SENSITIVE is printed.
+
+This problem is inspired by a base object that has two fields, each of which has two fields. We use the base object and intermediate objects to access all leaf fields, setting the leaf fields of the first object to PUBLIC, the first leaf field of the second object to PUBLIC, and the second leaf field of the second object to SENSITIVE. We model accessing the second field of whichever intermediate field object is selected, depending on an unknown conditional, and then print that leaf field. Without knowing the value of the conditional, we cannot reason about this program, and it MAY OR MAY NOT BE SAFE.
