@@ -2,7 +2,7 @@ This git repository contains the stimuli used (.png files in original-images) an
 
 None of these images or pseudo-code snippets is executable; they are hand-crafted problems used as stimuli in our tests.  We provide both the text files of the pseudo-code snippets and memory models (in the stimuli-text directory, each set in a sensitivity-inspired directory -- i.e., flow, path, field, and callsite) and the images we took of those files (in original-images).  The images provided were those actually used in  our tests, but we provide the text files for ease of reuse, modification, and correction.  We provide the instructions actually given to the participants in E-Prime-Instructions.pdf (separated on screens / by page as shown), and we provide the text for ease of modification in stimuli-text.
 
-We also provide our anonymized raw data (), and we define our regions of interest (ROIs) for each problem -- including our definitions for the types of regions and discussions of where we loosened the region definitions due to the constraints of eye tracking data (roi-explanations.pdf).
+We also provide our anonymized raw data (ExperimentalData.xlsx), and we define our regions of interest (ROIs) for each problem -- including our definitions for the types of regions and discussions of where we loosened the region definitions due to the constraints of eye tracking data (roi-explanations.pdf).
 
 If you use these stimuli or data in your research, please cite: Matzen, L. E., Leger, M. A., Reedy, G. (2021). Effects of Precise and Imprecise Value-Set Analysis (VSA) Information on Manual Code Analysis.  10.14722/bar.2021.23002.
 
